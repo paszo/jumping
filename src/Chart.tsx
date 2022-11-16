@@ -8,15 +8,13 @@ function Chart() {
 
   const width = 500;
   const height = 400;
-  const margin = { top: 50, right: 50, bottom: 50, left: 100 };
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
+  const margin = { top: 50, right: 50, bottom: 50, left: 50 };
 
   const data = [
     [-100, 100],
     [-100, 200],
     [-100, 300],
-    [-100, 400]
+    [-100, 400],
   ];
 
   const [minY, setMinY] = useState(100);
@@ -26,7 +24,10 @@ function Chart() {
     draw();
   }, [minY, maxY, fill]);
 
-  let yScale = d3.scaleLinear().domain([minY, maxY]).range([innerHeight, 0]);
+  let yScale = d3
+    .scaleLinear()
+    .domain([minY, maxY])
+    .range([height - margin.bottom, margin.top]);
 
   const draw = () => {
     let yAxis = d3.axisLeft(yScale);
@@ -56,27 +57,27 @@ function Chart() {
       }
     }
 
-    var circles = svg
+    const circles = svg
       .append("g")
       .attr("id", "circles")
       .attr("transform", "translate(200, 0)")
       .selectAll("circle")
-      .data(data)
+      .data(data);
+
+    circles
       .enter()
       .append("circle")
       .style("fill", fill)
       .attr("r", 4)
-      .attr("cx", function (d) {
-        return d[0];
-      })
-      .attr("cy", function (d) {
-        return yScale(d[1]);
-      });
+      .attr("cx", (d) => d[0])
+      .attr("cy", (d) => yScale(d[1]));
 
-    var y_axis = svg
+    circles.transition().duration(1000).attr("fill", fill);
+
+    svg
       .append("g")
       .attr("id", "y_axis")
-      .attr("transform", "translate(75,0)")
+      .attr("transform", `translate(${margin.left},0)`)
       .call(yAxis);
 
     function zoom(event: any) {
@@ -91,13 +92,7 @@ function Chart() {
     }
   };
 
-  return (
-    <div
-      style={{ position: "relative" }}
-      className="OptionsDataChart"
-      ref={ref}
-    ></div>
-  );
+  return <div className="OptionsDataChart" ref={ref}></div>;
 }
 
 export default Chart;

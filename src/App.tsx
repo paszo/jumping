@@ -1,14 +1,8 @@
-import React from 'react';
 import "./index.css";
 import Chart from "./Chart";
 
-
 function App() {
-  return (
-    <div className="App">
-     <Chart/>
-    </div>
-  );
+  return <Chart />;
 }
 
 export default App;
